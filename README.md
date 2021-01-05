@@ -30,9 +30,9 @@ $ gitools -c [commit_count]
 Example:
 
 ```shell
-gitools -c 100
+$ gitools -c 100
 
-gitools -ch ca895a914fc551f50301b83311c803846454bc21
+$ gitools -ch ca895a914fc551f50301b83311c803846454bc21
 ```
 
 For more details:
