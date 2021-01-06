@@ -39,18 +39,24 @@ For more details:
 
 ```shell
 $ gitools -h
-usage: gitools [-h] [-c COUNT] [-d DATE] [-ch HASH] [-m MODE]
+usage: gitools [-h] [-c COUNT] [-an AUTHOR_NAME] [-ae AUTHOR_EMAIL] [-cd COMMIT_DATE]
+                     [-ch COMMIT_HASH] [-cm COMMIT_MESSAGE] [-m MODE] [-i INPUT]
 
 optional arguments:
-  -h        --help          show this help message and exit
-  -c        --count         number of commit to show
-  -d        --date DATE
-  -ch       --hash HASH     commit hash
-  -m        --mode MODE
+  -h        --help                 show this help message and exit
+  -c        --count                number of commit to show
+  -cm       --commit-message       commit message
+  -ae       --author-email         author email
+  -an       --author-name          author name
+  -cd       --commit-date          commit date
+  -ch       --commit-hash          commit hash
+  -m        --mode                 command mode
+  -i        --input                git directory
 ```
 
 # Features
 
+- Modify Commit Author
 - Modify Commit Message
 - Modify Commit Date Time
 

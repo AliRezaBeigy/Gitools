@@ -1,3 +1,4 @@
 build/
 dist/
 Gitools.egg-info/
+**/__pycache__/

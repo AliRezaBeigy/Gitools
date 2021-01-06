@@ -3,6 +3,8 @@ import subprocess
 
 
 class Utilities:
+    cwd = os.getcwd()
+
     @staticmethod
     def findShell():
         try:
@@ -49,12 +51,11 @@ class Utilities:
 
     @staticmethod
     def excuteCommand(command):
-        process = subprocess.Popen(
-            Utilities.findShell(),
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            # TODO Remove Following Arg
-            cwd=os.getcwd())
+        process = subprocess.Popen(Utilities.findShell(),
+                                   stdin=subprocess.PIPE,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   cwd=Utilities.cwd)
 
         return process.communicate(str.encode(command))
 

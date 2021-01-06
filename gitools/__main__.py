@@ -1,4 +1,5 @@
 import argparse
+from os import path
 from gitools.utils import Utilities
 from gitools.gitools import Gitools
 
@@ -11,29 +12,60 @@ def main():
                             type=int,
                             required=False,
                             help="number of commit to show")
-        parser.add_argument("-d", "--date", type=int, required=False)
+        parser.add_argument("-ae",
+                            "--author-email",
+                            type=str,
+                            required=False,
+                            help="author email")
+        parser.add_argument("-an",
+                            "--author-name",
+                            type=str,
+                            required=False,
+                            help="author name")
+        parser.add_argument("-cd",
+                            "--commit-date",
+                            type=int,
+                            required=False,
+                            help="commit date")
         parser.add_argument("-ch",
-                            "--hash",
+                            "--commit-hash",
                             type=str,
                             required=False,
                             help="commit hash")
-        parser.add_argument(
-            "-m",
-            "--mode",
-            type=str,
-            required=False,
-        )
+        parser.add_argument("-cm",
+                            "--commit-message",
+                            type=str,
+                            required=False,
+                            help="commit message")
+        parser.add_argument("-m",
+                            "--mode",
+                            type=str,
+                            required=False,
+                            help='command mode')
+        parser.add_argument("-i",
+                            "--input",
+                            type=str,
+                            required=False,
+                            help="git directory")
         args = parser.parse_args()
 
         selectMode(args)
 
+        if args.input:
+            Utilities.cwd = path.realpath(args.input)
+
         gitHand = Gitools(commit_count=args.count,
-                          hash=args.hash,
-                          date=args.date)
+                          commit_hash=args.commit_hash,
+                          commit_date=args.commit_date,
+                          author_name=args.author_name,
+                          author_email=args.author_email,
+                          commit_message=args.commit_message)
         if args.mode == 'ud':
             gitHand.updateDate()
         elif args.mode == 'um':
             gitHand.updateMessage()
+        elif args.mode == 'ua':
+            gitHand.updateAuthor()
         elif args.mode == 'rb':
             gitHand.restoreBackup()
         else:
@@ -47,6 +79,7 @@ def main():
 def selectMode(args):
     modes = [('Update Date', 'ud', 'Update commit date time'),
              ('Update Message', 'um', 'Update commit message'),
+             ('Update Author', 'ua', 'Update author information'),
              ('Restore Backup', 'rb', 'Restore Backup')]
     if not args.mode:
         print('{:15s} {:25s} {:10s} {:30s}'.format('Index', 'Mode', 'Flag',

@@ -1,29 +1,33 @@
 import re
-import os
 import sys
+from os import path
 from datetime import datetime
+from shutil import rmtree, move
 from gitools.utils import Utilities
 from gitools.getChar import readChar
 
 
 class Gitools:
-    def __init__(self, hash, commit_count, date):
+    def __init__(self, commit_hash, commit_count, commit_date, commit_message,
+                 author_name, author_email):
         if (commit_count is None):
             commit_count = 10
 
-        self.hash = hash
-        self.date = date
-        self.new_message = None
+        self.commit_hash = commit_hash
+        self.commit_date = commit_date
+        self.author_name = author_name
+        self.author_email = author_email
         self.commit_count = commit_count
+        self.commit_message = commit_message
 
     def updateDate(self):
         self.checkBackup()
         self.selectCommit()
 
-        if not self.date:
+        if not self.commit_date:
             date = input('Enter New Commit Date: ')
             try:
-                self.date = datetime.strptime(
+                self.commit_date = datetime.strptime(
                     date, '%a %b %d %X %Y %z').strftime('%a %b %d %X %Y %z')
             except:
                 print(
@@ -35,21 +39,21 @@ class Gitools:
                 then
                     export GIT_AUTHOR_DATE="NEW_DATE";
                     export GIT_COMMITTER_DATE="NEW_DATE";
-                fi'""".replace("COMMIT_HASH",
-                               self.hash).replace("NEW_DATE", self.date)
+                fi'""".replace("COMMIT_HASH", self.commit_hash).replace(
+            "NEW_DATE", self.commit_date)
 
         _, err = Utilities.excuteCommand(command)
 
         if not err:
             print("Date Changed Successfully")
         else:
-            print("Date Change Failed")
+            print("Date Change Failed, Error:\r\n" + err.decode('utf-8'))
 
     def updateMessage(self):
         self.checkBackup()
         self.selectCommit()
 
-        if not self.new_message:
+        if not self.commit_message:
             print('Enter New Commit Message (Press Ctrl-C once to save):')
             new_message = ''
             while True:
@@ -60,7 +64,7 @@ class Gitools:
                     break
                 else:
                     new_message = new_message + c
-            self.new_message = new_message.strip()
+            self.commit_message = new_message.strip()
 
         print()
 
@@ -69,19 +73,48 @@ class Gitools:
                         echo "NEW_MESSAGE"
                     else
                         cat
-                    fi'""".replace("COMMIT_HASH",
-                                   self.hash).replace("NEW_MESSAGE",
-                                                      self.new_message)
+                    fi'""".replace("COMMIT_HASH", self.commit_hash).replace(
+            "NEW_MESSAGE", self.commit_message)
 
         _, err = Utilities.excuteCommand(command)
 
         if not err:
             print("Commit Message Changed Successfully")
         else:
-            print("Commit Message Change Failed")
+            print("Commit Message Change Failed, Error:\r\n" +
+                  err.decode('utf-8'))
+
+    def updateAuthor(self):
+        self.checkBackup()
+        self.selectCommit()
+
+        if not self.author_name:
+            self.author_name = input('Enter New Author Name: ').strip()
+        if not self.author_email:
+            self.author_email = input('Enter New Author Email: ').strip()
+
+        print()
+
+        command = """git filter-branch --env-filter 'if [[ $GIT_COMMIT = "COMMIT_HASH" ]]
+                    then
+                        export GIT_AUTHOR_NAME="NEW_AUTHOR_NAME"
+                        export GIT_AUTHOR_EMAIL="NEW_AUTHOR_EMAIL"
+                        export GIT_COMMITTER_NAME="NEW_AUTHOR_NAME"
+                        export GIT_COMMITTER_EMAIL="NEW_AUTHOR_EMAIL"
+                    fi'""".replace("COMMIT_HASH", self.commit_hash).replace(
+            "NEW_AUTHOR_NAME",
+            self.author_name).replace("NEW_AUTHOR_EMAIL", self.author_email)
+
+        _, err = Utilities.excuteCommand(command)
+
+        if not err:
+            print("Commit Author Changed Successfully")
+        else:
+            print("Commit Author Change Failed, Error:\r\n" +
+                  err.decode('utf-8'))
 
     def selectCommit(self):
-        if not self.hash:
+        if not self.commit_hash:
             commits = self.getCommits()
             print('{:15s} {:30s} {:30s} {:30s}'.format('Index', 'Author',
                                                        'Message', 'Date'))
@@ -92,7 +125,7 @@ class Gitools:
             print()
             index = input('Enter Commit Index: ')
             try:
-                self.hash = commits[int(index) - 1][0]
+                self.commit_hash = commits[int(index) - 1][0]
                 print()
             except:
                 Utilities.clearConsole()
@@ -116,7 +149,7 @@ class Gitools:
             out)
 
     def checkBackup(self):
-        if os.path.exists('.git/refs/original'):
+        if path.exists(path.join(Utilities.cwd, '.git', 'refs', 'original')):
             print('Are you sure you want to overwrite backup? [Default=Y/N]')
             res = input()
             if res.lower() == 'n':
@@ -132,10 +165,11 @@ class Gitools:
                 self.deleteBackup()
 
     def deleteBackup(self):
-        Utilities.excuteCommand('rm -rf .git/refs/original')
+        rmtree(path.join(Utilities.cwd, '.git', 'refs', 'original'))
 
     def restoreBackup(self):
-        Utilities.excuteCommand(
-            'rm -rf .git/refs/heads '
-            '&& mv .git/refs/original/refs/heads .git/refs')
+        rmtree(path.join(Utilities.cwd, '.git', 'refs', 'heads'))
+        move(
+            path.join(Utilities.cwd, '.git', 'refs', 'original', 'refs',
+                      'heads'), path.join(Utilities.cwd, '.git', 'refs'))
         self.deleteBackup()
