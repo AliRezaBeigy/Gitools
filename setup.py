@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(name='Gitools',
-      version='1.1.1',
+      version='1.1.2',
       license="MIT",
       author='AliReza Beigy',
       author_email='AliRezaBeigyKhu@gmail.com',
@@ -29,6 +29,6 @@ setup(name='Gitools',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Intended Audience :: Developers',
-          'Topic :: Software Development :: Version Control :: Git'
+          'Topic :: Software Development :: Version Control :: Git',
           'License :: OSI Approved :: MIT License',
       ])
