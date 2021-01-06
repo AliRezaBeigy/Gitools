@@ -30,5 +30,5 @@ setup(name='Gitools',
           'Programming Language :: Python :: 3.6',
           'Intended Audience :: Developers',
           'Topic :: Software Development :: Version Control :: Git'
-          'License :: OSI Approved :: BSD License',
+          'License :: OSI Approved :: MIT License',
       ])
