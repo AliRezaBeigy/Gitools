@@ -10,11 +10,11 @@ class Utilities:
         try:
             process = subprocess.Popen(
                 'bash',
+                stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
             )
-            out, err = process.communicate()
-
+            _, err = process.communicate()
             if not err:
                 return 'bash'
         except:
@@ -23,11 +23,11 @@ class Utilities:
         try:
             process = subprocess.Popen(
                 'sh',
+                stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
             )
-            out, err = process.communicate()
-
+            _, err = process.communicate()
             if not err:
                 return 'sh'
         except:
@@ -36,16 +36,21 @@ class Utilities:
         try:
             process = subprocess.Popen(
                 'where git',
-                stdin=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE,
+                stdin=subprocess.DEVNULL,
             )
             out, err = process.communicate()
-
             if not err:
                 out = out.decode('utf-8')
-                return next(x for x in out.split('\n')
-                            if '\\cmd\\git.exe' in x).strip().replace(
-                                "cmd\\git.exe", "bin\\bash.exe")
+                shellPath = os.path.join(
+                    out.split('\n')[0], '..', '..', 'usr', 'bin', 'bash')
+                if os.path.exists(shellPath):
+                    return shellPath
+                shellPath = os.path.join(
+                    out.split('\n')[0], '..', '..', 'usr', 'bin', 'sh')
+                if os.path.exists(shellPath):
+                    return shellPath
         except:
             pass
 

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(name='Gitools',
-      version='1.1.2',
+      version='1.2.0',
       license="MIT",
       author='AliReza Beigy',
       author_email='AliRezaBeigyKhu@gmail.com',

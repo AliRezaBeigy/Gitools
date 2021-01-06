@@ -3,8 +3,8 @@ import sys
 from os import path
 from datetime import datetime
 from shutil import rmtree, move
+from gitools.editor import Editor
 from gitools.utils import Utilities
-from gitools.getChar import readChar
 
 
 class Gitools:
@@ -54,19 +54,7 @@ class Gitools:
         self.selectCommit()
 
         if not self.commit_message:
-            print('Enter New Commit Message (Press Ctrl-C once to save):')
-            new_message = ''
-            while True:
-                c = readChar()
-                if c == '\x08':
-                    new_message = new_message[:-1]
-                elif c == '\x03':
-                    break
-                else:
-                    new_message = new_message + c
-            self.commit_message = new_message.strip()
-
-        print()
+            self.commit_message = Editor.input('# Enter New Commit Message')
 
         command = """git filter-branch --msg-filter 'if [[ $GIT_COMMIT = "COMMIT_HASH" ]]
                     then
