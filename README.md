@@ -7,6 +7,13 @@
 
 A handy tool to modify git history
 
+# Requirement
+
+- Python 3
+
+* Knowing following rule:
+  - **Do not change a shared history**
+
 # Quick Start
 
 You need to install python to use this app, so you can simply download python from [Official Site](https://www.python.org/downloads)
@@ -18,6 +25,8 @@ $ pip install -U Gitools
 or
 $ python -m pip install -U Gitools
 ```
+
+:warning: **Do not change a shared history**
 
 # Usage
 

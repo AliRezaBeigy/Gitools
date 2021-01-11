@@ -43,14 +43,14 @@ class Utilities:
             out, err = process.communicate()
             if not err:
                 out = out.decode('utf-8')
-                shellPath = os.path.join(
-                    out.split('\n')[0], '..', '..', 'usr', 'bin', 'bash')
+                out = out.split('\n')[0].strip()
+                out = os.path.dirname(out)
+                shellPath = os.path.join(out, '..', 'usr', 'bin', 'bash.exe')
                 if os.path.exists(shellPath):
-                    return shellPath
-                shellPath = os.path.join(
-                    out.split('\n')[0], '..', '..', 'usr', 'bin', 'sh')
+                    return os.path.abspath(shellPath)
+                shellPath = os.path.join(out, '..', 'usr', 'bin', 'sh.exe')
                 if os.path.exists(shellPath):
-                    return shellPath
+                    return os.path.abspath(shellPath)
         except:
             pass
 

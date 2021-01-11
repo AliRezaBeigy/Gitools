@@ -13,6 +13,7 @@ class Gitools:
         if (commit_count is None):
             commit_count = 10
 
+        self.commits = []
         self.commit_hash = commit_hash
         self.commit_date = commit_date
         self.author_name = author_name
@@ -54,7 +55,13 @@ class Gitools:
         self.selectCommit()
 
         if not self.commit_message:
-            self.commit_message = Editor.input('# Enter New Commit Message')
+            old_message = next(
+                (commit
+                 for commit in self.commits if commit[0] == self.commit_hash),
+                None)
+            self.commit_message = Editor.input(
+                '# Enter New Commit Message'
+                if old_message is None else old_message[5])
 
         command = """git filter-branch --msg-filter 'if [[ $GIT_COMMIT = "COMMIT_HASH" ]]
                     then
@@ -103,17 +110,17 @@ class Gitools:
 
     def selectCommit(self):
         if not self.commit_hash:
-            commits = self.getCommits()
+            self.commits = self.getCommits()
             print('{:15s} {:30s} {:30s} {:30s}'.format('Index', 'Author',
                                                        'Message', 'Date'))
-            for i, c in enumerate(commits):
+            for i, c in enumerate(self.commits):
                 print('{:15s} {:30s} {:30s} {:30s}'.format(
                     str(i + 1), c[2], c[5], c[4]))
 
             print()
             index = input('Enter Commit Index: ')
             try:
-                self.commit_hash = commits[int(index) - 1][0]
+                self.commit_hash = self.commits[int(index) - 1][0]
                 print()
             except:
                 Utilities.clearConsole()
