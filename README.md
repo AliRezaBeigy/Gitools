@@ -4,6 +4,7 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://github.com/AliRezaBeigy/Gitools/blob/master/LICENSE)
 [![PR's Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](http://makeapullrequest.com)
 ![GitHub Repo stars](https://img.shields.io/github/stars/AliRezaBeigy/Gitools?style=for-the-badge)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/gitools?style=for-the-badge)
 
 A handy tool to modify git history
 
@@ -59,8 +60,8 @@ optional arguments:
   -an       --author-name          author name
   -cd       --commit-date          commit date
   -ch       --commit-hash          commit hash
-  -m        --mode                 command mode
   -i        --input                git directory
+  -m        --module               select module to do something
 ```
 
 # Features
