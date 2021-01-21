@@ -51,6 +51,13 @@ def main():
         if args.input:
             Utilities.cwd = path.realpath(args.input)
 
+        while not path.exists(Utilities.cwd + "/.git"):
+            if path.ismount(Utilities.cwd):
+                raise Exception(
+                    "Not found .git folder! Make sure you are in the project folder."
+                )
+            Utilities.cwd = path.realpath(Utilities.cwd + "\\..")
+
         module = Module(
             commit_count=args.count,
             commit_hash=args.commit_hash,
