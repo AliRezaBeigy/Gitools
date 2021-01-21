@@ -8,15 +8,22 @@ class UpdateDateModule(Module):
         self.selectCommit()
 
         if not self.commit_date:
-            date = input("Enter New Commit Date: ")
+            date = self.input(object.author_date.strftime("%a %b %d %X %Y %z"))
             try:
                 self.commit_date = datetime.strptime(
                     date, "%a %b %d %X %Y %z"
                 ).strftime("%a %b %d %X %Y %z")
             except:
-                print('Enter Valid Date Such As "Fri Jan 1 00:00:00 2021 +0000"')
-                self.proccess()
-                return
+                pass
+
+        try:
+            self.commit_date = datetime.strptime(
+                self.commit_date, "%a %b %d %X %Y %z"
+            ).strftime("%a %b %d %X %Y %z")
+        except:
+            print('Enter Valid Date Such As "Fri Jan 1 00:00:00 2021 +0000"')
+            self.process()
+            return
 
         command = """git filter-branch -f --env-filter 'if [ $GIT_COMMIT = "COMMIT_HASH" ]
                 then

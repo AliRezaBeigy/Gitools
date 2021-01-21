@@ -21,7 +21,7 @@ class Editor:
             input = f.readlines()
         os.remove(tmp)
 
-        return "".join(filter(lambda x: x.strip() != message, input)).strip()
+        return "".join(input).strip()
 
     @staticmethod
     def findEditor():
@@ -56,14 +56,15 @@ class Editor:
             out, err = process.communicate()
             if not err:
                 out = out.decode("utf-8")
-                out = out.split("\n")[0]
-                editorPath = os.path.join(out, "..", "..", "usr", "bin", "nano")
+                out = out.split("\n")[0].strip()
+                out = os.path.dirname(out)
+                editorPath = os.path.join(out, "..", "usr", "bin", "nano.exe")
                 if os.path.exists(editorPath):
                     return [editorPath, "-t"]
-                editorPath = os.path.join(out, "..", "..", "usr", "bin", "vim")
+                editorPath = os.path.join(out, "..", "usr", "bin", "vim.exe")
                 if os.path.exists(editorPath):
                     return [editorPath, "-n"]
-                editorPath = os.path.join(out, "..", "..", "usr", "bin", "vi")
+                editorPath = os.path.join(out, "..", "usr", "bin", "vi")
                 if os.path.exists(editorPath):
                     return [editorPath, "-n"]
         except:

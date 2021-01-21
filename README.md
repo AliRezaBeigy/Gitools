@@ -47,7 +47,7 @@ $ gitools -ch ca895a914fc551f50301b83311c803846454bc21
 
 For more details:
 
-```shell
+```text
 $ gitools -h
 usage: gitools [-h] [-c COUNT] [-an AUTHOR_NAME] [-ae AUTHOR_EMAIL] [-cd COMMIT_DATE]
                      [-ch COMMIT_HASH] [-cm COMMIT_MESSAGE] [-m MODE] [-i INPUT]

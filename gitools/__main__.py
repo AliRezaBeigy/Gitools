@@ -54,9 +54,9 @@ def main():
         while not path.exists(Utilities.cwd + "/.git"):
             if path.ismount(Utilities.cwd):
                 raise Exception(
-                    "Not found .git folder! Make sure you are in the project folder."
+                    "No '.git' folder found! Make sure you are in the repository folder."
                 )
-            Utilities.cwd = path.realpath(Utilities.cwd + "\\..")
+            Utilities.cwd = path.realpath(path.join(Utilities.cwd, ".."))
 
         module = Module(
             commit_count=args.count,
@@ -85,6 +85,7 @@ def main():
 
 def selectModule(args, module: Module):
     if not args.module:
+        Utilities.clearConsole()
         print(
             "{:15s} {:25s} {:10s} {:30s}".format(
                 "Index", "Module", "Flag", "Description"
