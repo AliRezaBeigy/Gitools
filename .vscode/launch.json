@@ -9,7 +9,8 @@
       "request": "launch",
       "module": "gitools",
       "name": "Python: Main",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "args": ["-i", "C:\\Users\\ARB\\RiderProjects\\AirTaskerServer\\test\\UnitTests\\"]
     }
   ]
 }
