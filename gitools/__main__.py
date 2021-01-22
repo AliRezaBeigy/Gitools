@@ -53,9 +53,10 @@ def main():
 
         while not path.exists(Utilities.cwd + "/.git"):
             if path.ismount(Utilities.cwd):
-                raise Exception(
+                print(
                     "No '.git' folder found! Make sure you are in the repository folder."
                 )
+                exit()
             Utilities.cwd = path.realpath(path.join(Utilities.cwd, ".."))
 
         module = Module(
