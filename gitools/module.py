@@ -4,8 +4,8 @@ import subprocess
 from os import path
 from shutil import rmtree, move
 from .utils.editor import Editor
-from abc import ABCMeta, abstractmethod
 from .utils.utilities import Utilities
+from abc import ABCMeta, abstractmethod
 
 
 class Module:
