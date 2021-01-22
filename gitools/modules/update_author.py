@@ -1,4 +1,4 @@
-from gitools.module import Module
+from ..module import Module
 
 
 class UpdateAuthorModule(Module):

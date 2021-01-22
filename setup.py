@@ -6,13 +6,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="Gitools",
-    version="1.3.2",
+    version="1.3.3",
     license="MIT",
     author="AliReza Beigy",
     author_email="AliRezaBeigyKhu@gmail.com",
     entry_points={
         "console_scripts": [
-            "gitools=main:run",
+            "gitools=gitools.__main__:main",
         ]
     },
     python_requires=">=3.6",

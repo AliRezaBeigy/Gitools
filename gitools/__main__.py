@@ -1,11 +1,11 @@
 import argparse
 from os import path
-from gitools.module import Module
-from gitools.utils.utilities import Utilities
-from gitools.modules.update_date import UpdateDateModule
-from gitools.modules.update_author import UpdateAuthorModule
-from gitools.modules.update_message import UpdateMessageModule
-from gitools.modules.restore_backup import RestoreBackupModule
+from .module import Module
+from .utils.utilities import Utilities
+from .modules.update_date import UpdateDateModule
+from .modules.update_author import UpdateAuthorModule
+from .modules.update_message import UpdateMessageModule
+from .modules.restore_backup import RestoreBackupModule
 
 modules: list[Module] = [
     UpdateDateModule,

@@ -1,5 +1,5 @@
 from datetime import datetime
-from gitools.module import Module
+from ..module import Module
 
 
 class UpdateDateModule(Module):

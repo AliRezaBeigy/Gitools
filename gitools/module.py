@@ -3,9 +3,9 @@ import sys
 import subprocess
 from os import path
 from shutil import rmtree, move
-from gitools.utils.editor import Editor
+from .utils.editor import Editor
 from abc import ABCMeta, abstractmethod
-from gitools.utils.utilities import Utilities
+from .utils.utilities import Utilities
 
 
 class Module:
