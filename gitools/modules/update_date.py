@@ -8,7 +8,15 @@ class UpdateDateModule(Module):
         self.selectCommit()
 
         if not self.commit_date:
-            date = self.input(object.author_date.strftime("%a %b %d %X %Y %z"))
+            old_commit_date = next(
+                (commit for commit in self.commits if commit[0] == self.commit_hash),
+                None,
+            )
+            date = self.input(
+                "Fri Jan 1 00:00:00 2021 +0000"
+                if old_commit_date is None
+                else old_commit_date[4]
+            )
             try:
                 self.commit_date = datetime.strptime(
                     date, "%a %b %d %X %Y %z"

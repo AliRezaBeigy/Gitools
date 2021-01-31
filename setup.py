@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="Gitools",
-    version="1.3.5",
+    version="1.3.6",
     license="MIT",
     author="AliReza Beigy",
     author_email="AliRezaBeigyKhu@gmail.com",

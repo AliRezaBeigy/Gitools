@@ -13,7 +13,7 @@ class UpdateMessageModule(Module):
             )
             self.commit_message = self.input(
                 "# Enter New Commit Message" if old_message is None else old_message[5]
-            )
+            ).replace("# Enter New Commit Message", "")
 
         command = """git filter-branch --msg-filter 'if [[ $GIT_COMMIT = "COMMIT_HASH" ]]
                     then
