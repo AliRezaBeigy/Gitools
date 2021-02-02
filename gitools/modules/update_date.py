@@ -1,5 +1,7 @@
-from datetime import datetime
 from ..module import Module
+from datetime import datetime
+from ..utils.loading import Loading
+from gitools.utils.utilities import Utilities
 
 
 class UpdateDateModule(Module):
@@ -33,6 +35,9 @@ class UpdateDateModule(Module):
             self.process()
             return
 
+        Utilities.clearConsole()
+        loading = Loading("Please wait")
+
         command = """git filter-branch -f --env-filter 'if [ $GIT_COMMIT = "COMMIT_HASH" ]
                 then
                     export GIT_AUTHOR_DATE="NEW_DATE";
@@ -44,6 +49,9 @@ class UpdateDateModule(Module):
         )
 
         _, err = self.excuteCommand(command)
+
+        loading.stop()
+        Utilities.clearConsole()
 
         if not err:
             print("Date Changed Successfully")

@@ -1,5 +1,5 @@
 import setuptools
-from distutils.core import setup
+from distutils.core import setup, Extension
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -33,5 +33,8 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Version Control :: Git",
         "License :: OSI Approved :: MIT License",
+    ],
+    ext_modules=[
+        Extension("readkeytools", ["readkeytools/bind.c", "readkeytools/readkey.c"])
     ],
 )

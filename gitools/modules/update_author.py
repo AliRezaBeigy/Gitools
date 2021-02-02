@@ -1,4 +1,6 @@
 from ..module import Module
+from ..utils.loading import Loading
+from gitools.utils.utilities import Utilities
 
 
 class UpdateAuthorModule(Module):
@@ -11,7 +13,8 @@ class UpdateAuthorModule(Module):
         if not self.author_email:
             self.author_email = input("Enter New Author Email: ").strip()
 
-        print()
+        Utilities.clearConsole()
+        loading = Loading("Please wait")
 
         command = (
             """git filter-branch --env-filter 'if [[ $GIT_COMMIT = "COMMIT_HASH" ]]
@@ -28,6 +31,9 @@ class UpdateAuthorModule(Module):
         )
 
         _, err = self.excuteCommand(command)
+
+        loading.stop()
+        Utilities.clearConsole()
 
         if not err:
             print("Commit Author Changed Successfully")

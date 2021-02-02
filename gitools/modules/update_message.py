@@ -1,4 +1,6 @@
 from ..module import Module
+from ..utils.loading import Loading
+from gitools.utils.utilities import Utilities
 
 
 class UpdateMessageModule(Module):
@@ -15,6 +17,9 @@ class UpdateMessageModule(Module):
                 "# Enter New Commit Message" if old_message is None else old_message[5]
             ).replace("# Enter New Commit Message", "")
 
+        Utilities.clearConsole()
+        loading = Loading("Please wait")
+
         command = """git filter-branch --msg-filter 'if [[ $GIT_COMMIT = "COMMIT_HASH" ]]
                     then
                         echo "NEW_MESSAGE"
@@ -27,6 +32,9 @@ class UpdateMessageModule(Module):
         )
 
         _, err = self.excuteCommand(command)
+
+        loading.stop()
+        Utilities.clearConsole()
 
         if not err:
             print("Commit Message Changed Successfully")

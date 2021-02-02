@@ -2,6 +2,7 @@ import argparse
 from os import path
 from .module import Module
 from .utils.utilities import Utilities
+from .utils.option_selector import OptionSelector
 from .modules.update_date import UpdateDateModule
 from .modules.update_author import UpdateAuthorModule
 from .modules.update_message import UpdateMessageModule
@@ -87,28 +88,26 @@ def main():
 def selectModule(args, module: Module):
     if not args.module:
         Utilities.clearConsole()
-        print(
-            "{:15s} {:25s} {:10s} {:30s}".format(
-                "Index", "Module", "Flag", "Description"
-            )
-        )
+        header = "{:25s} {:10s} {:30s}".format("Module", "Flag", "Description")
 
+        options: list[str] = []
         for i, m in enumerate(modules):
             module.__class__ = m
             if module.isVisible():
-                print(
-                    "{:15s} {:25s} {:10s} {:30s}".format(
-                        str(i + 1),
+                options.append(
+                    "{:25s} {:10s} {:30s}".format(
                         m.getName(),
                         m.getFlag(),
                         m.getDescription(),
                     )
                 )
+
         module.__class__ = Module
 
-        index = input("Enter Module Index: ")
+        index = OptionSelector(options, 0, header).getOption()
+
         try:
-            args.module = modules[int(index) - 1].getFlag()
+            args.module = modules[int(index)].getFlag()
             Utilities.clearConsole()
         except:
             Utilities.clearConsole()

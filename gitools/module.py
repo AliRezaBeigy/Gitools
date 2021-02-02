@@ -6,6 +6,7 @@ from shutil import rmtree, move
 from .utils.editor import Editor
 from .utils.utilities import Utilities
 from abc import ABCMeta, abstractmethod
+from .utils.option_selector import OptionSelector
 
 
 class Module:
@@ -57,28 +58,14 @@ class Module:
     def selectCommit(self):
         if not self.commit_hash:
             self.commits = self.getCommits()
-            print(
-                "{:15s} {:30s} {:30s} {:30s}".format(
-                    "Index", "Author", "Message", "Date"
-                )
-            )
-            for i, c in enumerate(self.commits):
-                print(
-                    "{:15s} {:30s} {:30s} {:30s}".format(str(i + 1), c[2], c[5], c[4])
-                )
+            header = "{:30s} {:30s} {:30s}".format("Author", "Message", "Date")
 
-            print()
-            index = input("Enter Commit Index: ")
-            try:
-                self.commit_hash = self.commits[int(index) - 1][0]
-                print()
-            except:
-                Utilities.clearConsole()
-                print(
-                    "Enter a valid index or run with like following command\r\n> gitools --hash xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                )
-                print()
-                self.selectCommit()
+            options: list[str] = []
+            for i, c in enumerate(self.commits):
+                options.append("{:30s} {:30s} {:30s}".format(c[2], c[5], c[4]))
+
+            index = OptionSelector(options, 0, header).getOption()
+            self.commit_hash = self.commits[int(index)][0]
 
     def getCommits(self):
         out, err = self.excuteCommand("git log -n " + str(self.commit_count))
