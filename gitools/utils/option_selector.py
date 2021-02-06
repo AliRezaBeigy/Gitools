@@ -28,11 +28,11 @@ class OptionSelector:
         key = readKey(False)
 
         # Arrow Up Pressed
-        if key == b"\x00H":
+        if key in [b"\x00H", b"\xe0H"]:
             if self.selected_option > 0:
                 self.selected_option -= 1
         # Arrow Down Pressed
-        elif key == b"\x00P":
+        elif key in [b"\xe0P", b"\x00P"]:
             if self.selected_option < len(self.options) - 1:
                 self.selected_option += 1
         # Enter Pressed
