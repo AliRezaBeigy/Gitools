@@ -11,7 +11,7 @@ class Editor:
             with open(tmp, "a") as f:
                 f.write(message)
         process = subprocess.Popen(
-            Editor.findEditor() + [tmp], stderr=None, stdout=None, shell=False
+            Editor.findEditor() + [tmp], stderr=None, stdout=None
         )
         _, _ = process.communicate()
 
@@ -24,21 +24,21 @@ class Editor:
     @staticmethod
     def findEditor():
         try:
-            process = subprocess.Popen(["nano"], shell=False)
+            process = subprocess.Popen(["nano"])
             process.terminate()
             return ["nano", "-t"]
         except:
             pass
 
         try:
-            process = subprocess.Popen(["vim"], shell=False)
+            process = subprocess.Popen(["vim"])
             process.terminate()
             return ["vim", "-n"]
         except:
             pass
 
         try:
-            process = subprocess.Popen(["vi"], shell=False)
+            process = subprocess.Popen(["vi"])
             process.terminate()
             return ["vi", "-n"]
         except:
@@ -50,7 +50,6 @@ class Editor:
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
-                shell=False,
             )
             out, err = process.communicate()
             if not err:

@@ -13,7 +13,6 @@ class Utilities:
                 stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
-                shell=False,
             )
             _, err = process.communicate()
             if not err:
@@ -27,7 +26,6 @@ class Utilities:
                 stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
-                shell=False,
             )
             _, err = process.communicate()
             if not err:
@@ -41,7 +39,6 @@ class Utilities:
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
-                shell=False,
             )
             out, err = process.communicate()
             if not err:

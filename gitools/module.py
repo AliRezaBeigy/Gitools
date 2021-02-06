@@ -127,7 +127,6 @@ class Module:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             cwd=Utilities.cwd,
-            shell=False,
         )
 
         return process.communicate(str.encode(command))
