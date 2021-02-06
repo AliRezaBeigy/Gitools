@@ -2,6 +2,7 @@ import re
 import sys
 import subprocess
 from os import path
+from typing import List
 from shutil import rmtree, move
 from .utils.editor import Editor
 from .utils.utilities import Utilities
@@ -60,7 +61,7 @@ class Module:
             self.commits = self.getCommits()
             header = "{:30s} {:30s} {:30s}".format("Author", "Message", "Date")
 
-            options: list[str] = []
+            options: List[str] = []
             for i, c in enumerate(self.commits):
                 options.append("{:30s} {:30s} {:30s}".format(c[2], c[5], c[4]))
 

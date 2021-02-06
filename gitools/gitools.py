@@ -1,5 +1,6 @@
 import argparse
 from os import path
+from typing import List
 from .module import Module
 from .utils.utilities import Utilities
 from .utils.option_selector import OptionSelector
@@ -8,7 +9,7 @@ from .modules.update_author import UpdateAuthorModule
 from .modules.update_message import UpdateMessageModule
 from .modules.restore_backup import RestoreBackupModule
 
-modules: list[Module] = [
+modules: List[Module] = [
     UpdateDateModule,
     UpdateAuthorModule,
     UpdateMessageModule,
@@ -90,7 +91,7 @@ def selectModule(args, module: Module):
         Utilities.clearConsole()
         header = "{:25s} {:10s} {:30s}".format("Module", "Flag", "Description")
 
-        options: list[str] = []
+        options: List[str] = []
         for i, m in enumerate(modules):
             module.__class__ = m
             if module.isVisible():
