@@ -6,7 +6,7 @@ from gitools.utils.utilities import Utilities
 
 class UpdateDateModule(Module):
     def process(self):
-        self.checkBackup()
+        Module.checkBackup()
         self.selectCommit()
 
         if not self.commit_date:
@@ -14,7 +14,7 @@ class UpdateDateModule(Module):
                 (commit for commit in self.commits if commit[0] == self.commit_hash),
                 None,
             )
-            date = self.input(
+            date = Module.input(
                 "Fri Jan 1 00:00:00 2021 +0000"
                 if old_commit_date is None
                 else old_commit_date[4]
@@ -58,12 +58,15 @@ class UpdateDateModule(Module):
         else:
             print("Date Change Failed, Error:\r\n" + err.decode("utf-8"))
 
+    @staticmethod
     def getFlag():
         return "ud"
 
+    @staticmethod
     def getName():
         return "Update Date"
 
+    @staticmethod
     def getDescription():
         return "Update commit date time"
 

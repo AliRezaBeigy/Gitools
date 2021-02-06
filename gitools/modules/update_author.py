@@ -5,7 +5,7 @@ from gitools.utils.utilities import Utilities
 
 class UpdateAuthorModule(Module):
     def process(self):
-        self.checkBackup()
+        Module.checkBackup()
         self.selectCommit()
 
         if not self.author_name:
@@ -40,12 +40,15 @@ class UpdateAuthorModule(Module):
         else:
             print("Commit Author Change Failed, Error:\r\n" + err.decode("utf-8"))
 
+    @staticmethod
     def getFlag():
         return "ua"
 
+    @staticmethod
     def getName():
         return "Update Author"
 
+    @staticmethod
     def getDescription():
         return "Update author information"
 

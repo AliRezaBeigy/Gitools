@@ -9,36 +9,39 @@ class Utilities:
     def findShell():
         try:
             process = subprocess.Popen(
-                "bash",
+                ["bash"],
                 stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
+                shell=False,
             )
             _, err = process.communicate()
             if not err:
-                return "bash"
+                return ["bash"]
         except:
             pass
 
         try:
             process = subprocess.Popen(
-                "sh",
+                ["sh"],
                 stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
+                shell=False,
             )
             _, err = process.communicate()
             if not err:
-                return "sh"
+                return ["sh"]
         except:
             pass
 
         try:
             process = subprocess.Popen(
-                "where git",
+                ["where", "git"],
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
+                shell=False,
             )
             out, err = process.communicate()
             if not err:
@@ -47,10 +50,10 @@ class Utilities:
                 out = os.path.dirname(out)
                 shellPath = os.path.join(out, "..", "usr", "bin", "bash.exe")
                 if os.path.exists(shellPath):
-                    return os.path.abspath(shellPath)
+                    return [os.path.abspath(shellPath)]
                 shellPath = os.path.join(out, "..", "usr", "bin", "sh.exe")
                 if os.path.exists(shellPath):
-                    return os.path.abspath(shellPath)
+                    return [os.path.abspath(shellPath)]
         except:
             pass
 

@@ -92,7 +92,7 @@ def selectModule(args, module: Module):
         header = "{:25s} {:10s} {:30s}".format("Module", "Flag", "Description")
 
         options: List[str] = []
-        for i, m in enumerate(modules):
+        for m in modules:
             module.__class__ = m
             if module.isVisible():
                 options.append(
@@ -116,4 +116,4 @@ def selectModule(args, module: Module):
                 "Enter a valid index or run with like following command\r\n> gitools -m uh"
             )
             print()
-            selectModule(args)
+            selectModule(args, module)

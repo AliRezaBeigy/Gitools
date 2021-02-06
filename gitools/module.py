@@ -62,7 +62,7 @@ class Module:
             header = "{:30s} {:30s} {:30s}".format("Author", "Message", "Date")
 
             options: List[str] = []
-            for i, c in enumerate(self.commits):
+            for c in self.commits:
                 options.append("{:30s} {:30s} {:30s}".format(c[2], c[5], c[4]))
 
             index = OptionSelector(options, 0, header).getOption()
@@ -81,11 +81,13 @@ class Module:
             out,
         )
 
-    def hasBackup(self):
+    @staticmethod
+    def hasBackup():
         return path.exists(path.join(Utilities.cwd, ".git", "refs", "original"))
 
-    def checkBackup(self):
-        if self.hasBackup():
+    @staticmethod
+    def checkBackup():
+        if Module.hasBackup():
             print("Are you sure you want to overwrite backup? [Default=Y/N]")
             res = input()
             if res.lower() == "n":
@@ -93,26 +95,29 @@ class Module:
                 print("Do you want to restore backup? [Y/Default=N]")
                 res = input()
                 if res.lower() == "y":
-                    self.restoreBackup()
+                    Module.restoreBackup()
                 else:
                     sys.exit(1)
 
             else:
-                self.deleteBackup()
+                Module.deleteBackup()
 
-    def input(self, *argv):
+    @staticmethod
+    def input(*argv):
         return Editor.input(*argv)
 
-    def deleteBackup(self):
+    @staticmethod
+    def deleteBackup():
         rmtree(path.join(Utilities.cwd, ".git", "refs", "original"))
 
-    def restoreBackup(self):
+    @staticmethod
+    def restoreBackup():
         rmtree(path.join(Utilities.cwd, ".git", "refs", "heads"))
         move(
             path.join(Utilities.cwd, ".git", "refs", "original", "refs", "heads"),
             path.join(Utilities.cwd, ".git", "refs"),
         )
-        self.deleteBackup()
+        Module.deleteBackup()
 
     @staticmethod
     def excuteCommand(command):
@@ -122,6 +127,7 @@ class Module:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             cwd=Utilities.cwd,
+            shell=False,
         )
 
         return process.communicate(str.encode(command))

@@ -10,15 +10,13 @@ class OptionSelector:
     selected_option: int
     last_key_pressed_code: int
 
-    def __init__(self):
-        os.system("")  # enable VT100 Escape Sequence for WINDOWS 10 Ver. 1607
-
     def __init__(
         self, options: List[str], default_selected_option: int, header: str = ""
     ):
         self.header = header
         self.options = options
         self.selected_option = default_selected_option
+        os.system("")  # enable VT100 Escape Sequence for WINDOWS 10 Ver. 1607
 
     def getOption(self):
         print("\033[{0}m{1}  \033[m".format(40, self.header))

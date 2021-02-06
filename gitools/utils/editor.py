@@ -6,41 +6,39 @@ import subprocess
 class Editor:
     @staticmethod
     def input(message):
-        tmp = tempfile.mktemp()
+        tmp = tempfile.NamedTemporaryFile(delete=False).name
         if not message is None:
             with open(tmp, "a") as f:
                 f.write(message)
         process = subprocess.Popen(
-            Editor.findEditor() + [tmp],
-            stderr=None,
-            stdout=None,
+            Editor.findEditor() + [tmp], stderr=None, stdout=None, shell=False
         )
         _, _ = process.communicate()
 
         with open(tmp) as f:
-            input = f.readlines()
+            result = f.readlines()
         os.remove(tmp)
 
-        return "".join(input).strip()
+        return "".join(result).strip()
 
     @staticmethod
     def findEditor():
         try:
-            process = subprocess.Popen("nano")
+            process = subprocess.Popen(["nano"], shell=False)
             process.terminate()
             return ["nano", "-t"]
         except:
             pass
 
         try:
-            process = subprocess.Popen("vim")
+            process = subprocess.Popen(["vim"], shell=False)
             process.terminate()
             return ["vim", "-n"]
         except:
             pass
 
         try:
-            process = subprocess.Popen("vi")
+            process = subprocess.Popen(["vi"], shell=False)
             process.terminate()
             return ["vi", "-n"]
         except:
@@ -48,10 +46,11 @@ class Editor:
 
         try:
             process = subprocess.Popen(
-                "where git",
+                ["where", "git"],
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
+                shell=False,
             )
             out, err = process.communicate()
             if not err:

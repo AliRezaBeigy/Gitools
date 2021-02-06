@@ -5,7 +5,7 @@ from gitools.utils.utilities import Utilities
 
 class UpdateMessageModule(Module):
     def process(self):
-        self.checkBackup()
+        Module.checkBackup()
         self.selectCommit()
 
         if not self.commit_message:
@@ -13,7 +13,7 @@ class UpdateMessageModule(Module):
                 (commit for commit in self.commits if commit[0] == self.commit_hash),
                 None,
             )
-            self.commit_message = self.input(
+            self.commit_message = Module.input(
                 "# Enter New Commit Message" if old_message is None else old_message[5]
             ).replace("# Enter New Commit Message", "")
 
@@ -41,12 +41,15 @@ class UpdateMessageModule(Module):
         else:
             print("Commit Message Change Failed, Error:\r\n" + err.decode("utf-8"))
 
+    @staticmethod
     def getFlag():
         return "um"
 
+    @staticmethod
     def getName():
         return "Update Message"
 
+    @staticmethod
     def getDescription():
         return "Update commit message"
 
