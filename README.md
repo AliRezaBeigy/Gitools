@@ -8,14 +8,14 @@
 
 A handy tool to modify git history
 
-# Requirement
+## Requirement
 
 - Python 3
 
-* Knowing following rule:
+- Knowing following rule:
   - **Do not change a shared history**
 
-# Quick Start
+## Quick Start
 
 You need to install python to use this app, so you can simply download python from [Official Site](https://www.python.org/downloads)
 
@@ -27,9 +27,11 @@ or
 $ python -m pip install -U Gitools
 ```
 
+**Use `-U` option to update Gitools to the last version**
+
 :warning: **Do not change a shared history**
 
-# Usage
+## Usage
 
 ```shell
 $ gitools
@@ -64,13 +66,13 @@ optional arguments:
   -m        --module               select module to do something
 ```
 
-# Features
+## Features
 
 - Modify Commit Author
 - Modify Commit Message
 - Modify Commit Date Time
 
-# Contributions
+## Contributions
 
 This project is based on git filter-branch. As [indygreg](https://twitter.com/indygreg) calls it "the swiss-army knife of Git history rewriting".
 
@@ -79,6 +81,6 @@ If you're interested in contributing to this project, first of all I would like 
 Please feel free to reach out to me if you need help. My Email: AliRezaBeigyKhu@gmail.com
 Telegram: [@AliRezaBeigy](https://t.me/AliRezaBeigyKhu)
 
-# LICENSE
+## LICENSE
 
 MIT
