@@ -1,9 +1,14 @@
 import os
+import textwrap
 import subprocess
 
 
 class Utilities:
     cwd = os.getcwd()
+
+    @staticmethod
+    def ellipsis(input, length):
+        return textwrap.shorten(input, width=length, placeholder="...")
 
     @staticmethod
     def findShell():

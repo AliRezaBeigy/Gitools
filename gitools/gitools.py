@@ -97,9 +97,9 @@ def selectModule(args, module: Module):
             if module.isVisible():
                 options.append(
                     "{:25s} {:10s} {:30s}".format(
-                        m.getName(),
-                        m.getFlag(),
-                        m.getDescription(),
+                        Utilities.ellipsis(m.getName(), 24),
+                        Utilities.ellipsis(m.getFlag(), 9),
+                        Utilities.ellipsis(m.getDescription(), 29),
                     )
                 )
 

@@ -63,7 +63,13 @@ class Module:
 
             options: List[str] = []
             for c in self.commits:
-                options.append("{:30s} {:30s} {:30s}".format(c[2], c[5], c[4]))
+                options.append(
+                    "{:30s} {:30s} {:30s}".format(
+                        Utilities.ellipsis(c[2], 29),
+                        Utilities.ellipsis(c[5], 29),
+                        Utilities.ellipsis(c[4], 30),
+                    )
+                )
 
             index = OptionSelector(options, 0, header).getOption()
             self.commit_hash = self.commits[int(index)][0]
