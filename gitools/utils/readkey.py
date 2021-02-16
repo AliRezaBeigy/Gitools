@@ -14,17 +14,42 @@ class ReadKey:
 
 class ReadKeyUnix:
     def __init__(self):
-        import tty, termios
+        import tty, termios, fcntl, os
 
     def __call__(self):
+        import tty, termios, fcntl, os
+
+        result = b""
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
+
         try:
             tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
+            key = sys.stdin.read(1)
+            result += key.encode('utf-8')
+            
+            fd = sys.stdin.fileno()
+            oldterm = termios.tcgetattr(fd)
+            newattr = termios.tcgetattr(fd)
+            newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+            termios.tcsetattr(fd, termios.TCSANOW, newattr)
+            oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+            try:
+                while key != '':
+                    try:
+                        key = sys.stdin.read(1)
+                        result += key.encode('utf-8')
+                    except IOError:
+                        break
+            finally:
+                termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+                fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+
+        return result
 
 
 class ReadKeyWindows:

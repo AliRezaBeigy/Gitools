@@ -9,8 +9,7 @@
       "request": "launch",
       "module": "gitools",
       "name": "Python: Main",
-      "console": "integratedTerminal",
-      "args": ["-i", "C:\\Users\\ARB\\IdeaProjects\\TicksySPA"]
+      "console": "integratedTerminal"
     }
   ]
 }

@@ -39,13 +39,13 @@ class OptionSelector:
         key = readKey(False)
 
         # Arrow Up Pressed
-        if key in [b"\x00H", b"\xe0H"]:
+        if key in [b"\x00H", b"\xe0H", b"\x1b[A"]:
             if self.selected_option > 0:
                 self.selected_option -= 1
                 if self.selected_option == self.start_index - 1:
                     self.start_index -= 1
         # Arrow Down Pressed
-        elif key in [b"\xe0P", b"\x00P"]:
+        elif key in [b"\xe0P", b"\x00P", b"\x1b[B"]:
             if self.selected_option < len(self.options) - 1:
                 if self.selected_option == self.start_index + self.options_size - 1:
                     self.start_index += 1
