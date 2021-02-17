@@ -1,7 +1,8 @@
 import argparse
-from os import path
 from typing import List
+from os import path, _exit
 from .module import Module
+from .utils.editor import Editor
 from .utils.utilities import Utilities
 from .utils.option_selector import OptionSelector
 from .modules.update_date import UpdateDateModule
@@ -18,6 +19,8 @@ modules: List[Module] = [
 
 
 def main():
+    checkRequirements()
+
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument(
@@ -117,3 +120,17 @@ def selectModule(args, module: Module):
             )
             print()
             selectModule(args, module)
+
+
+def checkRequirements():
+    if not Utilities.gitExisted():
+        print("There is no git to use :(\r\nplease install git then retry :D")
+        _exit(1)
+    if len(Utilities.findShell()) == 0:
+        print("There is no shell application to use :(")
+        _exit(1)
+    if len(Editor.findEditor()) == 0:
+        print(
+            "There is no text editor to use :(\r\nplease install nano or vim then retry :D"
+        )
+        _exit(1)

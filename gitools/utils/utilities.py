@@ -11,6 +11,23 @@ class Utilities:
         return textwrap.shorten(input, width=length, placeholder="...")
 
     @staticmethod
+    def gitExisted():
+        try:
+            process = subprocess.Popen(
+                ["git"],
+                stderr=subprocess.PIPE,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+            )
+            _, err = process.communicate()
+            if not err:
+                return True
+        except:
+            pass
+
+        return False
+
+    @staticmethod
     def findShell():
         try:
             process = subprocess.Popen(
@@ -58,6 +75,8 @@ class Utilities:
                     return [os.path.abspath(shellPath)]
         except:
             pass
+
+        return []
 
     @staticmethod
     def clearConsole():

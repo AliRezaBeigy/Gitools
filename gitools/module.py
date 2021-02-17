@@ -23,7 +23,7 @@ class Module:
         commit_message,
     ):
         if commit_count is None:
-            commit_count = 10
+            commit_count = self.getDefaultCommitCount()
 
         self.commits = []
         self.commit_hash = commit_hash
@@ -82,10 +82,15 @@ class Module:
 
         out = out.decode("utf-8")
 
-        return re.findall(
-            r"commit\s([a-zA-Z0-9]*)(.*)\nAuthor:\s*([^<]*)<(.*)>\nDate:\s*(.*)\n\n\s*(.*)",
+        commits = re.findall(
+            r"commit\s([a-zA-Z0-9]*)(.*)\nAuthor:\s*([^<]*)<(.*)>\nDate:\s*(.*)\n\n(.*\n{0,1}.*)",
             out,
         )
+
+        return [c[:-1] + (c[5].replace("    ", ""),) for c in commits]
+
+    def getDefaultCommitCount(self):
+        return min(500, int(self.excuteCommand("git rev-list --count HEAD")[0]))
 
     @staticmethod
     def hasBackup():

@@ -67,3 +67,5 @@ class Editor:
                     return [editorPath, "-n"]
         except:
             pass
+
+        return []
