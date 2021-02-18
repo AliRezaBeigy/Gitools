@@ -6,13 +6,10 @@ from typing import List
 from shutil import rmtree, move
 from .utils.editor import Editor
 from .utils.utilities import Utilities
-from abc import ABCMeta, abstractmethod
 from .utils.option_selector import OptionSelector
 
 
 class Module:
-    __metaclass__ = ABCMeta
-
     def __init__(
         self,
         commit_hash,
@@ -34,25 +31,20 @@ class Module:
         self.commit_message = commit_message
 
     @staticmethod
-    @abstractmethod
     def getFlag():
         raise NotImplementedError("getFlag isn't implemented")
 
     @staticmethod
-    @abstractmethod
     def getName():
         raise NotImplementedError("getName isn't implemented")
 
     @staticmethod
-    @abstractmethod
     def getDescription():
         raise NotImplementedError("getDescription isn't implemented")
 
-    @abstractmethod
     def isVisible(self):
         raise NotImplementedError("isVisible isn't implemented")
 
-    @abstractmethod
     def process(self):
         raise NotImplementedError("process isn't implemented")
 

@@ -1,11 +1,12 @@
 import shutil
 from time import time
-from research.pack_reader import getPackDB
-from research.index_reader import getIndexDB
-from research.pack_writer import updateContent, writePack
+from research.pack_db.pack_reader import getPackDB
+from research.index_db.index_reader import getIndexDB
+from research.pack_db.pack_writer import updateContent, writePack
 
-if __name__ == "__main__":
-    hash = "888dbc9d9e3501abd469adf9d98da898964b5262"
+
+def test():
+    hash = "b14bbd4f6e5c90250dbfaeb101ecc468e4e1faf2"
     decompress_types = [1, 2, 3, 4, 5, 6, 7]
 
     t0 = time()
@@ -26,3 +27,7 @@ if __name__ == "__main__":
     shutil.move("pack-" + hash + ".pack", "pack-" + pack_db.pack_checksum + ".pack")
 
     print("Total Time: " + str(t1 - t0))
+
+
+def testCommit():
+    sample_commit = b"tree 09640a9d1c9862ee780816f25c5d0cb1668392e5\nparent b4b9d21d3d5a544ed1c2c127b6f169af38d1209d\nauthor AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\ncommitter AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\n\nUpdate README\n"

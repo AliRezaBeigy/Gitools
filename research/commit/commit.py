@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class Object:
+class Commit:
     message: str
     author_name: str
     trees: list[str]

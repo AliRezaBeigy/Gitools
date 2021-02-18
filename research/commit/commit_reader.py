@@ -1,12 +1,12 @@
 import re
 import zlib
 from os import path
-from research.object import Object
+from research.commit.commit import Commit
 from gitools.utils.utilities import Utilities
 from datetime import datetime, timedelta, timezone
 
 
-class ObjectReader:
+class CommitReader:
     @staticmethod
     def commit(hash: str):
         with open(
@@ -37,7 +37,7 @@ class ObjectReader:
                 data,
             )
 
-            return Object(
+            return Commit(
                 trees=trees,
                 parents=parents,
                 message=content[10],

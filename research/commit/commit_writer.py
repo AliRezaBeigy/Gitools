@@ -1,34 +1,34 @@
 import zlib
 from hashlib import sha1
-from research.object import Object
 from os import path, remove, makedirs
+from research.commit.commit import Commit
 from gitools.utils.utilities import Utilities
 
 
-class ObjectWriter:
+class CommitWriter:
     @staticmethod
-    def update(hash: str, object: Object):
-        tree = b"".join(map(lambda x: b"tree %s\n" % x, object.trees)).strip()
-        parent = b"".join(map(lambda x: b"parent %s\n" % x, object.parents)).strip()
+    def update(hash: str, commit: Commit):
+        tree = b"".join(map(lambda x: b"tree %s\n" % x, commit.trees)).strip()
+        parent = b"".join(map(lambda x: b"parent %s\n" % x, commit.parents)).strip()
         author = b"author %s <%s> %d %s" % (
-            object.author_name,
-            object.author_email,
-            int(object.author_date.timestamp()),
-            object.author_date.strftime("%z").encode(),
+            commit.author_name,
+            commit.author_email,
+            int(commit.author_date.timestamp()),
+            commit.author_date.strftime("%z").encode(),
         )
         committer = b"committer %s <%s> %d %s" % (
-            object.committer_name,
-            object.committer_email,
-            int(object.committer_date.timestamp()),
-            object.committer_date.strftime("%z").encode(),
+            commit.committer_name,
+            commit.committer_email,
+            int(commit.committer_date.timestamp()),
+            commit.committer_date.strftime("%z").encode(),
         )
         object_content = b"commit %d\x00%s\n%s\n%s\n%s\n\n%s\n" % (
-            object.commit_index,
+            commit.commit_index,
             tree,
             parent,
             author,
             committer,
-            object.message,
+            commit.message,
         )
 
         object_name = sha1(object_content).hexdigest()
