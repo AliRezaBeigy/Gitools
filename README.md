@@ -8,6 +8,10 @@
 
 A handy tool to modify git history
 
+<p align="center">
+  <img width="1350" src="https://raw.githubusercontent.com/AliRezaBeigy/Gitools/master/asciinema.svg">
+</p>
+
 ## Requirement
 
 - Python 3
