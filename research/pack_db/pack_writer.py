@@ -5,6 +5,7 @@ from hashlib import sha1
 from research.pack_db.pack_db import PackDB
 from research.index_db.index_db import IndexDB
 from research.index_db.index_object import IndexObject
+from research.pack_db.pack_object import PackObject
 
 
 def writePack(pack_db: PackDB, compress_types: list[int]):
@@ -30,12 +31,23 @@ def writePack(pack_db: PackDB, compress_types: list[int]):
             pack_offset = file.tell()
 
             fh = int(k[:2], 16)
-            try:
+            if fh in fan_out:
                 fan_out[fh] += 1
-            except:
+            else:
                 if fh == 0:
                     fan_out[fh] = 1
                 else:
+
+                    def fill_fan_out(c, fan_out):
+                        if not c in fan_out:
+                            if c == 0:
+                                fan_out[c] = 0
+                                return
+                            if not c - 1 in fan_out and c != 0:
+                                fill_fan_out(c - 1, fan_out)
+                            fan_out[c] = fan_out[c - 1]
+
+                    fill_fan_out(fh - 1, fan_out)
                     fan_out[fh] = fan_out[fh - 1] + 1
 
             type: int = v.type << 4
@@ -102,37 +114,52 @@ def writePack(pack_db: PackDB, compress_types: list[int]):
 
     return hash
 
-
-def updateContent(pack_db: PackDB, hash: str, old: str, new: str):
-    object = pack_db.objects[hash]
-
-    if object.data.find(b"test") < 0:
+def updateContent(pack_db: PackDB, object: PackObject, old: str, new: str):
+    if object.data.find(old) < 0:
         return
 
-    object.data = object.data.replace(b"test", b"test Heh Heh Heh Heh Heh")
+    object_hash = object.hash
+
+    object.data = object.data.replace(old, new)
     object.object_size = len(object.data)
 
     content = str(len(object.data)).encode("utf-8") + b"\x00" + object.data
 
     if object.type == 1:
         content = b"commit " + content
+    # handle
 
     new_hash = sha1(content).hexdigest()
 
     object.hash = new_hash
     pack_db.objects[new_hash] = object
-    del pack_db.objects[hash]
+    del pack_db.objects[object_hash]
 
-    for k in pack_db.objects:
-        obj = pack_db.objects[k]
-        obj.data = obj.data.replace(hash.encode(), new_hash.encode())
-        obj.data = obj.data.replace(
-            int(hash, 16).to_bytes(20, "big"), int(new_hash, 16).to_bytes(20, "big")
-        )
+    object_key_index = 0
+    object_keys = list(pack_db.objects.keys())
+    object_key_len = len(object_keys)
+    while object_key_index < object_key_len:
+        obj = pack_db.objects[object_keys[object_key_index]]
+        object_key_index += 1
+
+        if obj.type == 3:
+            continue
+
+        encoded_hash = object_hash.encode()
+        if obj.data.find(encoded_hash) >= 0:
+            updateContent(pack_db, obj, encoded_hash, new_hash.encode())
+            object_key_index = 0
+            object_keys = list(pack_db.objects.keys())
+        
+        hash_bytes = int(object_hash, 16).to_bytes(20, "big")
+        if obj.data.find(hash_bytes) >= 0:
+            updateContent(pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big"))
+            object_key_index = 0
+            object_keys = list(pack_db.objects.keys())
+
         if obj.ref:
-            if obj.ref.hex() == hash:
-                sa = 1 + 5
-            # obj.ref = obj.ref.replace(
-            #     int(hash, 16).to_bytes(20, 'big'), int(new_hash, 16).to_bytes(20, 'big'))
+            if obj.ref.hex() == object_hash:
+                raise Exception("This type does not supported.")
 
+    print(object_hash + " -> " + new_hash)
     return new_hash
