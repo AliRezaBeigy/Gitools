@@ -15,6 +15,9 @@ def test():
     index_db = getIndexDB(hash)
     pack_db = getPackDB(hash, index_db, decompress_types)
 
+    t1 = time()
+    print("Read Time: " + str(t1 - t0))
+
     updateObject(
         pack_db,
         pack_db.objects["015da177f181d01b03501043fcb0082220ff8987"],
@@ -22,7 +25,12 @@ def test():
         b"Heh Heh Heh Heh Heh",
     )
 
+    print("Update Time: " + str(time() - t1))
+    t1 = time()
+
     hash = writePack(pack_db, decompress_types)
+    
+    print("Write Time: " + str(time() - t1))
 
     index_db = getIndexDB(hash)
     pack_db = getPackDB(hash, index_db, decompress_types)
