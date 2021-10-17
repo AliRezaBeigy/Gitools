@@ -114,7 +114,7 @@ def writePack(pack_db: PackDB, compress_types: list[int]):
 
     return hash
 
-def updateContent(pack_db: PackDB, object: PackObject, old: str, new: str):
+def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
     if object.data.find(old) < 0:
         return
 
@@ -123,13 +123,21 @@ def updateContent(pack_db: PackDB, object: PackObject, old: str, new: str):
     object.data = object.data.replace(old, new)
     object.object_size = len(object.data)
 
-    content = str(len(object.data)).encode("utf-8") + b"\x00" + object.data
+    content = str(object.object_size).encode("utf-8") + b"\x00" + object.data
 
     if object.type == 1:
         content = b"commit " + content
-    # handle
+    elif object.type == 2:
+        content = b"tree " + content
+    elif object.type == 3:
+        content = b"blob " + content
+    else:
+        raise Exception("This type does not supported.")
 
     new_hash = sha1(content).hexdigest()
+
+    if new_hash == object_hash:
+        return
 
     object.hash = new_hash
     pack_db.objects[new_hash] = object
@@ -147,13 +155,13 @@ def updateContent(pack_db: PackDB, object: PackObject, old: str, new: str):
 
         encoded_hash = object_hash.encode()
         if obj.data.find(encoded_hash) >= 0:
-            updateContent(pack_db, obj, encoded_hash, new_hash.encode())
+            updateObject(pack_db, obj, encoded_hash, new_hash.encode())
             object_key_index = 0
             object_keys = list(pack_db.objects.keys())
         
         hash_bytes = int(object_hash, 16).to_bytes(20, "big")
         if obj.data.find(hash_bytes) >= 0:
-            updateContent(pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big"))
+            updateObject(pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big"))
             object_key_index = 0
             object_keys = list(pack_db.objects.keys())
 
