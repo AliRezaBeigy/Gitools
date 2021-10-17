@@ -153,17 +153,19 @@ def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
         if obj.type == 3:
             continue
 
-        encoded_hash = object_hash.encode()
-        if obj.data.find(encoded_hash) >= 0:
-            updateObject(pack_db, obj, encoded_hash, new_hash.encode())
-            object_key_index = 0
-            object_keys = list(pack_db.objects.keys())
+        if obj.type == 1:
+            encoded_hash = object_hash.encode()
+            if obj.data.find(encoded_hash) >= 0:
+                updateObject(pack_db, obj, encoded_hash, new_hash.encode())
+                object_key_index = 0
+                object_keys = list(pack_db.objects.keys())
         
-        hash_bytes = int(object_hash, 16).to_bytes(20, "big")
-        if obj.data.find(hash_bytes) >= 0:
-            updateObject(pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big"))
-            object_key_index = 0
-            object_keys = list(pack_db.objects.keys())
+        if obj.type == 2:
+            hash_bytes = int(object_hash, 16).to_bytes(20, "big")
+            if obj.data.find(hash_bytes) >= 0:
+                updateObject(pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big"))
+                object_key_index = 0
+                object_keys = list(pack_db.objects.keys())
 
         if obj.ref:
             if obj.ref.hex() == object_hash:
