@@ -8,13 +8,13 @@ from core.index_db.index_object import IndexObject
 from core.pack_db.pack_object import PackObject
 
 
-def writePack(pack_db: PackDB, compress_types: list[int]):
+def writePack(pack_path: str, pack_db: PackDB, compress_types: list[int]):
     hash = sha1(b"a" * random.randint(1, 150)).hexdigest()
 
     index_db = IndexDB()
     fan_out: dict[int, int] = {}
 
-    with open(path.join("core", "samples", f"pack-{hash}.pack"), "wb+") as file:
+    with open(path.join(pack_path, f"pack-{hash}.pack"), "wb+") as file:
         signature = pack_db.signature
         file.write(signature)
 
@@ -114,6 +114,7 @@ def writePack(pack_db: PackDB, compress_types: list[int]):
 
     return hash
 
+
 def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
     if object.data.find(old) < 0:
         return
@@ -159,11 +160,13 @@ def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
                 updateObject(pack_db, obj, encoded_hash, new_hash.encode())
                 object_key_index = 0
                 object_keys = list(pack_db.objects.keys())
-        
+
         if obj.type == 2:
             hash_bytes = int(object_hash, 16).to_bytes(20, "big")
             if obj.data.find(hash_bytes) >= 0:
-                updateObject(pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big"))
+                updateObject(
+                    pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big")
+                )
                 object_key_index = 0
                 object_keys = list(pack_db.objects.keys())
 

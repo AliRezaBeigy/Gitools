@@ -81,10 +81,10 @@ def getPackObject(
     return pack_object
 
 
-def getPackDB(hash: str, index_db: IndexDB, decompress_types: list[int]):
+def getPackDB(pack_path: str, index_db: IndexDB, decompress_types: list[int]):
     pack_db = PackDB()
 
-    with open(path.join("core", "samples", f"pack-{hash}.pack"), "rb") as file:
+    with open(pack_path, "rb") as file:
         pack_db.signature = file.read(4)
 
         pack_db.version = [

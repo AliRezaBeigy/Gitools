@@ -5,10 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Test Research",
+      "name": "Python: Test Core",
       "type": "python",
       "request": "launch",
-      "module": "research",
+      "module": "core",
       "console": "integratedTerminal"
     },
     {
