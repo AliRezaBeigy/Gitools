@@ -1,4 +1,4 @@
-from research.index_db.index_object import IndexObject
+from core.index_db.index_object import IndexObject
 
 
 class IndexDB:

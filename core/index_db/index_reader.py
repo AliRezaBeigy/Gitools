@@ -1,15 +1,15 @@
 import operator
 from os import path
 from hashlib import sha1
-from research.index_db.index_db import IndexDB
-from research.index_db.index_object import IndexObject
+from core.index_db.index_db import IndexDB
+from core.index_db.index_object import IndexObject
 
 
 def getIndexDB(hash: str, skip_fan_out=True):
     index_db = IndexDB()
 
-    idx_path = path.join("research", "samples", f"pack-{hash}.idx")
-    pack_path = path.join("research", "samples", f"pack-{hash}.pack")
+    idx_path = path.join("core", "samples", f"pack-{hash}.idx")
+    pack_path = path.join("core", "samples", f"pack-{hash}.pack")
 
     with open(idx_path, "rb") as file:
         index_db.signature = file.read(4)

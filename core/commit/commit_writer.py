@@ -1,7 +1,7 @@
 import zlib
 from hashlib import sha1
 from os import path, remove, makedirs
-from research.commit.commit import Commit
+from core.commit.commit import Commit
 from gitools.utils.utilities import Utilities
 
 

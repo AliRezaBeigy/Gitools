@@ -1,7 +1,7 @@
 import re
 import zlib
 from os import path
-from research.commit.commit import Commit
+from core.commit.commit import Commit
 from gitools.utils.utilities import Utilities
 from datetime import datetime, timedelta, timezone
 

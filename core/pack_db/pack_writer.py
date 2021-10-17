@@ -2,10 +2,10 @@ import zlib
 import random
 from os import path
 from hashlib import sha1
-from research.pack_db.pack_db import PackDB
-from research.index_db.index_db import IndexDB
-from research.index_db.index_object import IndexObject
-from research.pack_db.pack_object import PackObject
+from core.pack_db.pack_db import PackDB
+from core.index_db.index_db import IndexDB
+from core.index_db.index_object import IndexObject
+from core.pack_db.pack_object import PackObject
 
 
 def writePack(pack_db: PackDB, compress_types: list[int]):
@@ -14,7 +14,7 @@ def writePack(pack_db: PackDB, compress_types: list[int]):
     index_db = IndexDB()
     fan_out: dict[int, int] = {}
 
-    with open(path.join("research", "samples", f"pack-{hash}.pack"), "wb+") as file:
+    with open(path.join("core", "samples", f"pack-{hash}.pack"), "wb+") as file:
         signature = pack_db.signature
         file.write(signature)
 
@@ -87,7 +87,7 @@ def writePack(pack_db: PackDB, compress_types: list[int]):
         index_db.pack_checksum = sha1(file.read()).digest()
         file.write(index_db.pack_checksum)
 
-    with open(path.join("research", "samples", f"pack-{hash}.idx"), "wb+") as file:
+    with open(path.join("core", "samples", f"pack-{hash}.idx"), "wb+") as file:
         file.write(b"\xfftOc")
         file.write((0).to_bytes(1, "big"))
         file.write((0).to_bytes(1, "big"))

@@ -1,4 +1,4 @@
-from research.pack_db.pack_object import PackObject
+from core.pack_db.pack_object import PackObject
 
 
 class PackDB:

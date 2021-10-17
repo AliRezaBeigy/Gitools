@@ -1,9 +1,9 @@
 import shutil
 from os import path
 from time import time
-from research.pack_db.pack_reader import getPackDB
-from research.index_db.index_reader import getIndexDB
-from research.pack_db.pack_writer import updateObject, writePack
+from core.pack_db.pack_reader import getPackDB
+from core.index_db.index_reader import getIndexDB
+from core.pack_db.pack_writer import updateObject, writePack
 
 
 def test():
@@ -38,12 +38,12 @@ def test():
     t1 = time()
 
     shutil.move(
-        path.join("research", "samples", "pack-" + hash + ".idx"),
-        path.join("research", "samples", "pack-" + pack_db.pack_checksum + ".idx"),
+        path.join("core", "samples", "pack-" + hash + ".idx"),
+        path.join("core", "samples", "pack-" + pack_db.pack_checksum + ".idx"),
     )
     shutil.move(
-        path.join("research", "samples", "pack-" + hash + ".pack"),
-        path.join("research", "samples", "pack-" + pack_db.pack_checksum + ".pack"),
+        path.join("core", "samples", "pack-" + hash + ".pack"),
+        path.join("core", "samples", "pack-" + pack_db.pack_checksum + ".pack"),
     )
 
     print("Total Time: " + str(t1 - t0))

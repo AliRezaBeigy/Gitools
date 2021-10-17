@@ -2,9 +2,9 @@ import zlib
 from os import path
 from hashlib import sha1
 from io import BufferedReader
-from research.pack_db.pack_db import PackDB
-from research.index_db.index_db import IndexDB
-from research.pack_db.pack_object import PackObject
+from core.pack_db.pack_db import PackDB
+from core.index_db.index_db import IndexDB
+from core.pack_db.pack_object import PackObject
 
 
 def getPackObject(
@@ -84,7 +84,7 @@ def getPackObject(
 def getPackDB(hash: str, index_db: IndexDB, decompress_types: list[int]):
     pack_db = PackDB()
 
-    with open(path.join("research", "samples", f"pack-{hash}.pack"), "rb") as file:
+    with open(path.join("core", "samples", f"pack-{hash}.pack"), "rb") as file:
         pack_db.signature = file.read(4)
 
         pack_db.version = [
