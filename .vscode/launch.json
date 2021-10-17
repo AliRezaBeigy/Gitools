@@ -5,11 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Test Core",
+      "name": "Python: Test Commit Core",
       "type": "python",
       "request": "launch",
       "module": "core",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "args": ["commit"]
+    },
+    {
+      "name": "Python: Test PackDB Core",
+      "type": "python",
+      "request": "launch",
+      "module": "core",
+      "console": "integratedTerminal",
+      "args": ["pack"]
     },
     {
       "type": "python",

@@ -81,7 +81,11 @@ def getPackObject(
     return pack_object
 
 
-def getPackDB(pack_path: str, index_db: IndexDB, decompress_types: list[int]):
+def getPackDB(
+    pack_path: str,
+    index_db: IndexDB,
+    decompress_types: list[int] = [1, 2, 3, 4, 5, 6, 7],
+):
     pack_db = PackDB()
 
     with open(pack_path, "rb") as file:

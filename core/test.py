@@ -2,11 +2,13 @@ import shutil
 from os import path
 from time import time
 from core.pack_db.pack_reader import getPackDB
+from core.commit.commit_reader import readCommit
+from core.commit.commit_writer import writeCommit
 from core.index_db.index_reader import getIndexDB
 from core.pack_db.pack_writer import updateObject, writePack
 
 
-def test():
+def test_packdb():
     hash = "06aaeaae812acc57df5fc48c92b3528d9488dcf5"
     decompress_types = [1, 2, 3, 4, 5, 6, 7]
 
@@ -57,5 +59,12 @@ def test():
     print("Total Time: " + str(t1 - t0))
 
 
-def testCommit():
+def test_commit():
     sample_commit = b"tree 09640a9d1c9862ee780816f25c5d0cb1668392e5\nparent b4b9d21d3d5a544ed1c2c127b6f169af38d1209d\nauthor AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\ncommitter AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\n\nUpdate README\n"
+    commit = readCommit(sample_commit)
+    result = writeCommit(commit)
+    assert result == sample_commit
+    commit.tree = b"XXXXXa9d1c9862ee780816f25c5d0cb1668392e5"
+    result = writeCommit(commit)
+    assert result != sample_commit
+    assert result == sample_commit.replace(b'09640a9d1c9862ee780816f25c5d0cb1668392e5', b'XXXXXa9d1c9862ee780816f25c5d0cb1668392e5')
