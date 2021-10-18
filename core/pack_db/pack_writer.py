@@ -1,6 +1,6 @@
 import zlib
-import random
 from os import path
+from io import BytesIO
 from hashlib import sha1
 from core.pack_db.pack_db import PackDB
 from core.index_db.index_db import IndexDB
@@ -8,111 +8,120 @@ from core.index_db.index_object import IndexObject
 from core.pack_db.pack_object import PackObject
 
 
-def writePack(pack_path: str, pack_db: PackDB, compress_types: list[int]):
-    hash = sha1(b"a" * random.randint(1, 150)).hexdigest()
-
+def writePack(
+    pack_path: str, pack_db: PackDB, compress_types: list[int] = [1, 2, 3, 4, 5, 6, 7]
+):
     index_db = IndexDB()
     fan_out: dict[int, int] = {}
 
-    with open(path.join(pack_path, f"pack-{hash}.pack"), "wb+") as file:
-        signature = pack_db.signature
-        file.write(signature)
+    pack_file = BytesIO()
+    signature = pack_db.signature
+    pack_file.write(signature)
 
-        version = pack_db.version
-        file.write((version[0]).to_bytes(1, "big"))
-        file.write((version[1]).to_bytes(1, "big"))
-        file.write((version[2]).to_bytes(1, "big"))
-        file.write((version[3]).to_bytes(1, "big"))
+    version = pack_db.version
+    pack_file.write((version[0]).to_bytes(1, "big"))
+    pack_file.write((version[1]).to_bytes(1, "big"))
+    pack_file.write((version[2]).to_bytes(1, "big"))
+    pack_file.write((version[3]).to_bytes(1, "big"))
 
-        file.write(pack_db.total_object.to_bytes(4, "big"))
+    pack_file.write(pack_db.total_object.to_bytes(4, "big"))
 
-        for k in sorted(pack_db.objects):
-            v = pack_db.objects[k]
-            pack_offset = file.tell()
+    for k in sorted(pack_db.objects):
+        v = pack_db.objects[k]
+        pack_offset = pack_file.tell()
 
-            fh = int(k[:2], 16)
-            if fh in fan_out:
-                fan_out[fh] += 1
+        fh = int(k[:2], 16)
+        if fh in fan_out:
+            fan_out[fh] += 1
+        else:
+            if fh == 0:
+                fan_out[fh] = 1
             else:
-                if fh == 0:
-                    fan_out[fh] = 1
-                else:
 
-                    def fill_fan_out(c, fan_out):
-                        if not c in fan_out:
-                            if c == 0:
-                                fan_out[c] = 0
-                                return
-                            if not c - 1 in fan_out and c != 0:
-                                fill_fan_out(c - 1, fan_out)
-                            fan_out[c] = fan_out[c - 1]
+                def fill_fan_out(c, fan_out):
+                    if not c in fan_out:
+                        if c == 0:
+                            fan_out[c] = 0
+                            return
+                        if not c - 1 in fan_out and c != 0:
+                            fill_fan_out(c - 1, fan_out)
+                        fan_out[c] = fan_out[c - 1]
 
-                    fill_fan_out(fh - 1, fan_out)
-                    fan_out[fh] = fan_out[fh - 1] + 1
+                fill_fan_out(fh - 1, fan_out)
+                fan_out[fh] = fan_out[fh - 1] + 1
 
-            type: int = v.type << 4
-            data_size = v.object_size
+        type: int = v.type << 4
+        data_size = v.object_size
 
-            size_bits: list[int] = [data_size & int("00001111", 2)]
-            data_size >>= 4
-            while data_size > 0:
-                size_bits.insert(0, data_size & int("01111111", 2))
-                data_size >>= 7
+        size_bits: list[int] = [data_size & int("00001111", 2)]
+        data_size >>= 4
+        while data_size > 0:
+            size_bits.insert(0, data_size & int("01111111", 2))
+            data_size >>= 7
 
+        msb = int("10000000", 2) if len(size_bits) > 1 else int("00000000", 2)
+
+        pack_file.write((msb + type + size_bits.pop()).to_bytes(1, "big"))
+
+        while len(size_bits) > 0:
             msb = int("10000000", 2) if len(size_bits) > 1 else int("00000000", 2)
+            pack_file.write((msb + size_bits.pop()).to_bytes(1, "big"))
 
-            file.write((msb + type + size_bits.pop()).to_bytes(1, "big"))
+        if v.type in [7]:
+            pack_file.write(v.ref)
 
-            while len(size_bits) > 0:
-                msb = int("10000000", 2) if len(size_bits) > 1 else int("00000000", 2)
-                file.write((msb + size_bits.pop()).to_bytes(1, "big"))
+        if v.type in compress_types:
+            pack_file.write(zlib.compress(v.data))
+        else:
+            pack_file.write(v.data)
 
-            if v.type in [7]:
-                file.write(v.ref)
+        current_cursor = pack_file.tell()
+        pack_file.seek(pack_offset, 0)
+        crc32 = zlib.crc32(pack_file.read(current_cursor - pack_offset))
 
-            if v.type in compress_types:
-                file.write(zlib.compress(v.data))
-            else:
-                file.write(v.data)
-
-            current_cursor = file.tell()
-            file.seek(pack_offset, 0)
-            crc32 = zlib.crc32(file.read(current_cursor - pack_offset))
-
-            index_db.objects[k] = IndexObject(k, crc32, pack_offset)
+        index_db.objects[k] = IndexObject(k, crc32, pack_offset)
 
         index_db.fan_out = list(fan_out.values())
 
-        file.seek(0, 0)
-        index_db.pack_checksum = sha1(file.read()).digest()
-        file.write(index_db.pack_checksum)
+        pack_file.seek(0, 0)
+        index_db.pack_checksum = sha1(pack_file.read()).digest()
+        pack_file.write(index_db.pack_checksum)
 
-    with open(path.join("core", "samples", f"pack-{hash}.idx"), "wb+") as file:
-        file.write(b"\xfftOc")
-        file.write((0).to_bytes(1, "big"))
-        file.write((0).to_bytes(1, "big"))
-        file.write((0).to_bytes(1, "big"))
-        file.write((2).to_bytes(1, "big"))
+    index_file = BytesIO()
+    index_file.write(b"\xfftOc")
+    index_file.write((0).to_bytes(1, "big"))
+    index_file.write((0).to_bytes(1, "big"))
+    index_file.write((0).to_bytes(1, "big"))
+    index_file.write((2).to_bytes(1, "big"))
 
-        for v in index_db.fan_out:
-            file.write(v.to_bytes(4, "big"))
+    for v in index_db.fan_out:
+        index_file.write(v.to_bytes(4, "big"))
 
-        for k in index_db.objects:
-            file.write(int(k, 16).to_bytes(20, "big"))
+    for k in index_db.objects:
+        index_file.write(int(k, 16).to_bytes(20, "big"))
 
-        for _, v in index_db.objects.items():
-            file.write(v.crc32.to_bytes(4, "big"))
+    for _, v in index_db.objects.items():
+        index_file.write(v.crc32.to_bytes(4, "big"))
 
-        for _, v in index_db.objects.items():
-            file.write(v.pack_start_offset.to_bytes(4, "big"))
+    for _, v in index_db.objects.items():
+        index_file.write(v.pack_start_offset.to_bytes(4, "big"))
 
-        file.write(index_db.pack_checksum)
+    index_file.write(index_db.pack_checksum)
 
-        file.seek(0, 0)
-        idx_checksum = sha1(file.read()).digest()
-        file.write(idx_checksum)
+    index_file.seek(0, 0)
+    idx_checksum = sha1(index_file.read()).digest()
+    index_file.write(idx_checksum)
+    pack_db.pack_checksum = idx_checksum.hex()
+    
+    with open(path.join(pack_path, f"pack-{pack_db.pack_checksum}.pack"), "wb+") as file:
+        pack_file.seek(0)
+        file.write(pack_file.read())
 
-    return hash
+    with open(path.join(pack_path, f"pack-{pack_db.pack_checksum}.idx"), "wb+") as file:
+        index_file.seek(0)
+        file.write(index_file.read())
+    
+    return pack_db.pack_checksum
 
 
 def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):

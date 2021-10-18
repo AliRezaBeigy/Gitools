@@ -1,4 +1,3 @@
-import shutil
 from os import path
 from time import time
 from core.pack_db.pack_reader import getPackDB
@@ -39,22 +38,7 @@ def test_packdb():
 
     print("Write Time: " + str(time() - t1))
 
-    result_index_db = path.join(result_dir, f"pack-{hash}.idx")
-    result_pack_db = path.join(result_dir, f"pack-{hash}.pack")
-
-    index_db = getIndexDB(result_index_db, result_pack_db)
-    pack_db = getPackDB(result_pack_db, index_db, decompress_types)
-
     t1 = time()
-
-    shutil.move(
-        result_index_db,
-        path.join(result_dir, "pack-" + pack_db.pack_checksum + ".idx"),
-    )
-    shutil.move(
-        result_pack_db,
-        path.join(result_dir, "pack-" + pack_db.pack_checksum + ".pack"),
-    )
 
     print("Total Time: " + str(t1 - t0))
 
