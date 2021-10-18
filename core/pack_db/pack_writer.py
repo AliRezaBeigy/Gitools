@@ -81,11 +81,11 @@ def writePack(
 
         index_db.objects[k] = IndexObject(k, crc32, pack_offset)
 
-        index_db.fan_out = list(fan_out.values())
+    index_db.fan_out = list(fan_out.values())
 
-        pack_file.seek(0, 0)
-        index_db.pack_checksum = sha1(pack_file.read()).digest()
-        pack_file.write(index_db.pack_checksum)
+    pack_file.seek(0, 0)
+    index_db.pack_checksum = sha1(pack_file.read()).digest()
+    pack_file.write(index_db.pack_checksum)
 
     index_file = BytesIO()
     index_file.write(b"\xfftOc")
@@ -116,10 +116,12 @@ def writePack(
     with open(path.join(pack_path, f"pack-{pack_db.pack_checksum}.pack"), "wb+") as file:
         pack_file.seek(0)
         file.write(pack_file.read())
+        pack_file.close()
 
     with open(path.join(pack_path, f"pack-{pack_db.pack_checksum}.idx"), "wb+") as file:
         index_file.seek(0)
         file.write(index_file.read())
+        index_file.close()
     
     return pack_db.pack_checksum
 

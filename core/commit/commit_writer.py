@@ -1,4 +1,3 @@
-from hashlib import sha1
 from core.commit.commit import Commit
 
 
