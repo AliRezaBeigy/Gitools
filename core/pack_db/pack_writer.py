@@ -84,8 +84,10 @@ def writePack(
     index_db.fan_out = list(fan_out.values())
 
     pack_file.seek(0, 0)
-    index_db.pack_checksum = sha1(pack_file.read()).digest()
-    pack_file.write(index_db.pack_checksum)
+    pack_checksum = sha1(pack_file.read()).digest()
+    pack_file.write(pack_checksum)
+    index_db.pack_checksum = pack_checksum.hex()
+    pack_db.pack_checksum = index_db.pack_checksum
 
     index_file = BytesIO()
     index_file.write(b"\xfftOc")
@@ -106,12 +108,11 @@ def writePack(
     for _, v in index_db.objects.items():
         index_file.write(v.pack_start_offset.to_bytes(4, "big"))
 
-    index_file.write(index_db.pack_checksum)
-
     index_file.seek(0, 0)
     idx_checksum = sha1(index_file.read()).digest()
+    index_file.write(pack_checksum)
     index_file.write(idx_checksum)
-    pack_db.pack_checksum = idx_checksum.hex()
+    index_db.idx_checksum = idx_checksum.hex()
     
     with open(path.join(pack_path, f"pack-{pack_db.pack_checksum}.pack"), "wb+") as file:
         pack_file.seek(0)
@@ -155,6 +156,8 @@ def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
     pack_db.objects[new_hash] = object
     del pack_db.objects[object_hash]
 
+    new_hashes = [(object_hash, new_hash)]
+
     object_key_index = 0
     object_keys = list(pack_db.objects.keys())
     object_key_len = len(object_keys)
@@ -168,14 +171,14 @@ def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
         if obj.type == 1:
             encoded_hash = object_hash.encode()
             if obj.data.find(encoded_hash) >= 0:
-                updateObject(pack_db, obj, encoded_hash, new_hash.encode())
+                new_hashes = new_hashes + updateObject(pack_db, obj, encoded_hash, new_hash.encode())
                 object_key_index = 0
                 object_keys = list(pack_db.objects.keys())
 
         if obj.type == 2:
             hash_bytes = int(object_hash, 16).to_bytes(20, "big")
             if obj.data.find(hash_bytes) >= 0:
-                updateObject(
+                new_hashes = new_hashes + updateObject(
                     pack_db, obj, hash_bytes, int(new_hash, 16).to_bytes(20, "big")
                 )
                 object_key_index = 0
@@ -185,5 +188,4 @@ def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
             if obj.ref.hex() == object_hash:
                 raise Exception("This type does not supported.")
 
-    print(object_hash + " -> " + new_hash)
-    return new_hash
+    return new_hashes

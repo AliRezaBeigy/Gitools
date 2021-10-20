@@ -22,7 +22,7 @@ def test_packdb():
     t1 = time()
     print("Read Time: " + str(t1 - t0))
 
-    updateObject(
+    new_hashes = updateObject(
         pack_db,
         pack_db.objects["015da177f181d01b03501043fcb0082220ff8987"],
         b"linux",
@@ -42,6 +42,7 @@ def test_packdb():
 
     print("Total Time: " + str(t1 - t0))
 
+    [print(h) for h in new_hashes]
 
 def test_commit():
     sample_commit = b"tree 09640a9d1c9862ee780816f25c5d0cb1668392e5\nparent b4b9d21d3d5a544ed1c2c127b6f169af38d1209d\nauthor AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\ncommitter AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\n\nUpdate README\n"
