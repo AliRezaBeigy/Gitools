@@ -85,6 +85,10 @@ class Module:
         return min(500, int(self.excuteCommand("git rev-list --count HEAD")[0]))
 
     @staticmethod
+    def runGC():
+        Module.excuteCommand("git gc")
+
+    @staticmethod
     def hasBackup():
         return path.exists(path.join(Utilities.cwd, ".git", "refs", "original"))
 
