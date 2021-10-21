@@ -4,7 +4,6 @@ from core.commit.commit import Commit
 @staticmethod
 def writeCommit(commit: Commit):
     tree = b"tree %s" % commit.tree
-    parent = b"".join(map(lambda x: b"parent %s\n" % x, commit.parents)).strip()
     author = b"author %s <%s> %d %s" % (
         commit.author_name,
         commit.author_email,
@@ -17,8 +16,20 @@ def writeCommit(commit: Commit):
         int(commit.committer_date.timestamp()),
         commit.committer_date.strftime("%z").encode(),
     )
-    return b"%s\n%s\n%s\n%s\n\n%s\n" % (tree,
-        parent,
-        author,
-        committer,
-        commit.message)
+
+    data = tree + b'\n'
+
+    if len(commit.parents):
+        parent = b"".join(map(lambda x: b"parent %s\n" % x, commit.parents)).strip()
+        data += parent + b'\n'
+
+    data += author + b'\n'
+    data += committer + b'\n'
+
+    if commit.gpgsig is not None:
+        gpgsig = b'gpgsig ' + commit.gpgsig
+        data += gpgsig + b'\n'
+        
+    data += b'\n\n' + commit.message + b'\n'
+
+    return data

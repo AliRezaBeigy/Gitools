@@ -4,8 +4,8 @@ from io import BytesIO
 from hashlib import sha1
 from core.pack_db.pack_db import PackDB
 from core.index_db.index_db import IndexDB
-from core.index_db.index_object import IndexObject
 from core.pack_db.pack_object import PackObject
+from core.index_db.index_object import IndexObject
 
 
 def writePack(
@@ -81,7 +81,15 @@ def writePack(
 
         index_db.objects[k] = IndexObject(k, crc32, pack_offset)
 
+    index_db.total_object = list(fan_out.values())[-1]
+
+    fc = len(fan_out)
+    while fc != 256:
+        fan_out[fc] = index_db.total_object
+        fc = len(fan_out)
+
     index_db.fan_out = list(fan_out.values())
+    index_db.total_object = index_db.fan_out[-1]
 
     pack_file.seek(0, 0)
     pack_checksum = sha1(pack_file.read()).digest()
@@ -96,8 +104,10 @@ def writePack(
     index_file.write((0).to_bytes(1, "big"))
     index_file.write((2).to_bytes(1, "big"))
 
+
     for v in index_db.fan_out:
         index_file.write(v.to_bytes(4, "big"))
+        fc = len(index_db.fan_out)
 
     for k in index_db.objects:
         index_file.write(int(k, 16).to_bytes(20, "big"))

@@ -3,6 +3,7 @@ from datetime import datetime
 
 class Commit:
     tree: str
+    gpgsig: str
     message: str
     author_name: str
     author_email: str
@@ -15,6 +16,7 @@ class Commit:
     def __init__(
         self,
         tree: str,
+        gpgsig: str,
         message: str,
         author_name: str,
         author_email: str,
@@ -25,8 +27,9 @@ class Commit:
         committer_date: datetime,
     ):
         self.tree = tree
+        self.gpgsig = gpgsig
         self.parents = parents
-        self.message = message.strip()
+        self.message = message
         self.author_name = author_name
         self.author_date = author_date
         self.author_email = author_email

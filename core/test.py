@@ -22,11 +22,15 @@ def test_packdb():
     t1 = time()
     print("Read Time: " + str(t1 - t0))
 
+    object = pack_db.objects["015da177f181d01b03501043fcb0082220ff8987"]
+    commit = readCommit(object.data)
+    commit.message = b"Test Commit"
+
     new_hashes = updateObject(
         pack_db,
-        pack_db.objects["015da177f181d01b03501043fcb0082220ff8987"],
-        b"linux",
-        b"Heh Heh Heh Heh Heh",
+        object,
+        object.data,
+        writeCommit(commit),
     )
 
     print("Update Time: " + str(time() - t1))
@@ -43,6 +47,16 @@ def test_packdb():
     print("Total Time: " + str(t1 - t0))
 
     [print(h) for h in new_hashes]
+
+    t1 = time()
+
+    idx_path = path.join(result_dir, f"pack-{hash}.idx")
+    pack_path = path.join(result_dir, f"pack-{hash}.pack")
+
+    index_db = getIndexDB(idx_path, pack_path)
+    pack_db = getPackDB(pack_path, index_db, decompress_types)
+
+    print("Read Again Time: " + str(time() - t1))
 
 def test_commit():
     sample_commit = b"tree 09640a9d1c9862ee780816f25c5d0cb1668392e5\nparent b4b9d21d3d5a544ed1c2c127b6f169af38d1209d\nauthor AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\ncommitter AliRezaBeigy <AliRezaBeigyKhu@gmail.com> 1612593585 +0330\n\nUpdate README\n"

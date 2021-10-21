@@ -4,44 +4,80 @@ from datetime import datetime, timedelta, timezone
 
 
 def readCommit(data: bytes):
-    content = re.findall(
-        b"author\s*([^<]*)\s<(.*)>\s(\d+)\s((\+|\-)\d{4})\ncommitter\s*([^<]*)\s<(.*)>\s(\d+)\s((\+|\-)\d{4})\n\n\s*(.*)",
-        data,
-        flags=re.DOTALL,
-    )[0]
-    parents = re.findall(
-        b"parent\s*([a-z0-9]*)\n",
-        data,
-    )
     tree = re.findall(
         b"tree\s*([a-z0-9]*)\n",
+        data
+    )
+
+    if len(tree):
+        tree = tree[0]
+    else:
+        raise Exception("Tree not found")
+
+    committer = re.findall(
+        b"committer\s*([^<]*)\s<(.*)>\s(\d+)\s((\+|\-)\d{4})",
+        data
+    )
+
+    if len(committer):
+        committer = committer[0]
+    else:
+        raise Exception("Committer not found")
+
+    author = re.findall(
+        b"author\s*([^<]*)\s<(.*)>\s(\d+)\s((\+|\-)\d{4})",
+        data
+    )
+    
+    if len(author):
+        author = author[0]
+    else:
+        raise Exception("Author not found")
+
+    gpgsig = re.findall(
+        b"gpgsig\s*(-----BEGIN(.*)-----END(.*)-----)",
         data,
-    )[0]
+        flags=re.DOTALL
+    )
+    
+    gpgsig = gpgsig[0][0] if len(gpgsig) else None
+
+    message = re.findall(
+        b"\n\n\s*(.*)\n$",
+        data,
+        flags=re.DOTALL,
+    )
+
+    parents = re.findall(
+        b"parent\s*([a-z0-9]*)\n",
+        data
+    )
 
     return Commit(
         tree=tree,
+        gpgsig=gpgsig,
         parents=parents,
-        message=content[10],
-        author_name=content[0],
-        author_email=content[1],
-        committer_name=content[5],
-        committer_email=content[6],
+        message=message,
+        author_name=author[0],
+        author_email=author[1],
+        committer_name=committer[0],
+        committer_email=committer[1],
         author_date=datetime.fromtimestamp(
-            float(content[2]),
+            float(author[2]),
             tz=timezone(
                 timedelta(
                     seconds=(
-                        int(content[3][:3]) * 3600 + int(content[3][3:]) * 60
+                        int(author[3][:3]) * 3600 + int(author[3][3:]) * 60
                     )
                 )
             ),
         ),
         committer_date=datetime.fromtimestamp(
-            float(content[7]),
+            float(committer[2]),
             tz=timezone(
                 timedelta(
                     seconds=(
-                        int(content[8][:3]) * 3600 + int(content[8][3:]) * 60
+                        int(committer[3][:3]) * 3600 + int(committer[3][3:]) * 60
                     )
                 )
             ),
