@@ -159,14 +159,14 @@ def updateObject(pack_db: PackDB, object: PackObject, old: str, new: str):
 
     new_hash = sha1(content).hexdigest()
 
+    new_hashes = [(object_hash, new_hash)]
+
     if new_hash == object_hash:
-        return
+        return new_hashes
 
     object.hash = new_hash
     pack_db.objects[new_hash] = object
     del pack_db.objects[object_hash]
-
-    new_hashes = [(object_hash, new_hash)]
 
     object_key_index = 0
     object_keys = list(pack_db.objects.keys())
